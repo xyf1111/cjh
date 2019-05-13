@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.chaoshua.modules.background.dao.SellerDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.chaoshua.modules.background.entity.SellerEntity" id="sellerMap">
+        <result property="id" column="id"/>
+        <result property="pid" column="pid"/>
+        <result property="isSeller" column="is_seller"/>
+        <result property="contact" column="contact"/>
+        <result property="mobile" column="mobile"/>
+        <result property="password" column="password"/>
+        <result property="wechat" column="weChat"/>
+        <result property="note" column="note"/>
+        <result property="qq" column="qq"/>
+        <result property="balance" column="balance"/>
+        <result property="limit" column="limit"/>
+        <result property="isVip" column="is_vip"/>
+        <result property="publishable" column="publishable"/>
+        <result property="benefit" column="benefit"/>
+        <result property="amount" column="amount"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <!--格外添加字段开始-->
+        <result property="categoryId" column="category_id"/>
+        <result property="name" column="name"/>
+        <result property="url" column="url"/>
+        <!--格外添加字段结束-->
+    </resultMap>
+
+    <select id="getList" parameterType="java.util.Map" resultMap="sellerMap">
+        SELECT
+            t.*, ts.category_id,
+            ts.`name`,
+            ts.url,
+            ts.category
+        FROM
+            t_seller t
+        LEFT JOIN t_shop ts ON ts.seller_id = t.id AND ts.is_default = 1
+        <where>
+            <if test="status != null and status != ''">
+                t.status = #{status}
+            </if>
+            <if test="pid != null and pid != ''">
+               AND t.pid = #{pid}
+            </if>
+            <if test="isSeller != null and isSeller != ''">
+               AND t.is_seller = #{isSeller}
+            </if>
+            <if test="flag != null and flag != ''">
+               AND t.is_seller BETWEEN 0 AND  2
+            </if>
+            <if test="mobile != null and mobile != ''">
+                AND t.mobile LIKE concat(#{mobile},'%')
+            </if>
+            <if test="contact != null and contact != ''">
+                AND t.contact  LIKE concat(#{contact},'%')
+            </if>
+            <if test="publishable != null and publishable != ''">
+                AND t.publishable = #{publishable}
+            </if>
+            <if test="isVip != null and isVip != ''">
+                AND t.is_vip = #{isVip}
+            </if>
+            <if test="agentName != null and agentName != ''">
+                AND t.pid in (SELECT t1.id FROM  t_agent t1 WHERE t1.`name` LIKE concat("%",#{agentName},"%") AND t.is_seller = 3)
+            </if>
+        </where>
+        ORDER BY t.create_time DESC
+    </select>
+
+    <select id="getLowerSellerListByPid" parameterType="long" resultType="io.chaoshua.modules.app.vo.SellerVo">
+        SELECT
+        t.contact,
+        t.create_time,
+        t.id,
+        t.`status`,
+        (
+        SELECT
+        COUNT(1)
+        FROM
+        t_mission tm
+        WHERE
+        `status` = 7
+        AND tm.seller_id = t.id
+        ) AS count
+        FROM
+        t_seller t
+        WHERE
+        t.pid = #{pid}
+        AND t.is_seller = 2
+    </select>
+
+    <select id="getSumTotalBySellerName" parameterType="java.util.Map" resultType="io.chaoshua.modules.background.entity.TotalSellerEntity">
+        SELECT
+        t.`contact`,
+        t.mobile,
+        (SELECT COUNT(1) FROM t_mission t1 WHERE t1.seller_id = t.id) AS sumAmount,
+        (SELECT COUNT(1) FROM t_mission t1 WHERE t1.seller_id = t.id AND `status` = 7) AS sumRemain,
+        (SELECT COUNT(1) FROM t_mission t1 WHERE t1.seller_id = t.id AND is_bad = 2) AS sumBad,
+        (SELECT SUM(tc.amount) FROM t_charge tc WHERE tc.seller_id = t.id AND tc.status = 2) AS sumMoney
+        FROM t_seller t WHERE t.contact LIKE CONCAT("%",#{contact},"%")
+    </select>
+
+    <select id="getSumBalance" parameterType="java.util.Map" resultType="io.chaoshua.modules.background.entity.TotalSellerEntity">
+       SELECT SUM(balance) AS sumBalance,is_seller FROM t_seller GROUP BY is_seller
+        <if test="startTime != null and startTime != ''">
+            AND  create_time >= #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            AND  create_time &lt;= #{endTime}
+        </if>
+    </select>
+</mapper>

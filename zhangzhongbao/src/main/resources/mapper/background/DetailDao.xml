@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.chaoshua.modules.background.dao.DetailDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.chaoshua.modules.background.entity.DetailEntity" id="detailMap">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="mobile" column="mobile"/>
+        <result property="isSeller" column="is_seller"/>
+        <result property="isWrong" column="is_wrong"/>
+        <result property="type" column="type"/>
+        <result property="amount" column="amount"/>
+        <result property="beforeStock" column="before_stock"/>
+        <result property="beforeFree" column="before_free"/>
+        <result property="stock" column="stock"/>
+        <result property="free" column="free"/>
+        <result property="note" column="note"/>
+        <result property="balance" column="balance"/>
+        <result property="code" column="code"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <!--额外新增-->
+        <result property="sumMoney" column="sumMoney"/>
+    </resultMap>
+
+    <select id="getList" parameterType="java.util.Map" resultMap="detailMap">
+       SELECT
+            user_name,
+            mobile,
+            `type`,
+            amount,
+            before_stock,
+            before_free,
+            stock,
+            free,
+            note,
+            balance,
+            `code`,
+            create_time
+        FROM
+            `t_detail`
+        <where>
+            <if test="startTime != null and startTime != ''">
+                create_time >= #{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                AND  create_time &lt;= #{endTime}
+            </if>
+            <if test="code != null and code != ''">
+                AND  code = #{code}
+            </if>
+            <if test="userName != null and userName != ''">
+                AND  user_name LIKE CONCAT(#{userName},'%')
+            </if>
+            <if test="mobile != null and mobile != ''">
+                AND  mobile LIKE CONCAT(#{mobile},'%')
+            </if>
+            <if test="type != null and type != ''">
+                AND  `type` = #{type}
+            </if>
+            <if test="userId != null and userId != ''">
+                AND  user_id = #{userId}
+            </if>
+            <if test="isSeller != null and isSeller != ''">
+                AND  is_seller = #{isSeller}
+            </if>
+        </where>
+        ORDER BY id DESC
+    </select>
+
+    <select id="getListByPid" parameterType="java.util.Map" resultMap="detailMap">
+        SELECT
+            amount,
+            note,
+            `code`,
+            balance,
+            create_time,
+            user_name
+        FROM
+            t_detail
+        WHERE
+            is_seller = 1
+            AND type = 11
+        AND user_id IN (
+            SELECT
+                id
+            FROM
+                t_seller
+            WHERE
+                pid = #{pid}
+        )
+        order by create_time desc
+    </select>
+
+    <select id="getSumMoney" parameterType="java.util.Map" resultMap="detailMap">
+        SELECT
+            SUM(amount),
+            is_seller
+        FROM
+            t_detail
+        WHERE
+            type = 9
+        GROUP BY
+            is_seller
+        <if test="startTime != null and startTime != ''">
+          AND  create_time >= #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+          AND  create_time &lt;= #{endTime}
+        </if>
+    </select>
+</mapper>

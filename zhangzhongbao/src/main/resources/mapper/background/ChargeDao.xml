@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.chaoshua.modules.background.dao.ChargeDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.chaoshua.modules.background.entity.ChargeEntity" id="chargeMap">
+        <result property="id" column="id"/>
+        <result property="sellerId" column="seller_id"/>
+        <result property="agentId" column="agent_id"/>
+        <result property="img" column="img"/>
+        <result property="amount" column="amount"/>
+        <result property="bank" column="bank"/>
+        <result property="name" column="name"/>
+        <result property="note" column="note"/>
+        <result property="contact" column="contact"/>
+        <result property="inChargeId" column="in_charge_id"/>
+        <result property="platformName" column="platform_name"/>
+        <result property="status" column="status"/>
+        <result property="isSeller" column="is_seller"/>
+        <result property="mistakeNote" column="mistake_note"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="time" column="time"/>
+        <!-- 添加字段-->
+        <result property="sellerMoney" column="sellerMoney"/>
+    </resultMap>
+
+    <select id="getSellerMoneyByIsSeller"  parameterType="java.util.Map" resultMap="chargeMap">
+        SELECT
+        `status`,
+        is_seller,
+        SUM(amount) AS sellerMoney,
+        create_time
+        FROM
+        t_charge
+        GROUP BY
+        is_seller HAVING `status` = 2
+        <if test="startTime != null and startTime != ''">
+            AND create_time >= #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            AND create_time &lt;= #{endTime}
+        </if>
+    </select>
+
+</mapper>

@@ -1,0 +1,529 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.chaoshua.modules.background.dao.mission.MissionDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.chaoshua.modules.background.entity.mission.MissionEntity" id="missionMap">
+        <result property="id" column="id"/>
+        <result property="taskId" column="task_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="sellerId" column="seller_id"/>
+        <result property="shopId" column="shop_id"/>
+        <result property="missionCode" column="mission_code"/>
+        <result property="keyWord" column="key_word"/>
+        <result property="status" column="status"/>
+        <result property="taskStyle" column="task_style"/>
+        <result property="missionTime" column="mission_time"/>
+        <result property="payTime" column="pay_time"/>
+        <result property="shopName" column="shop_name"/>
+        <result property="sellerName" column="seller_name"/>
+        <result property="taobao" column="taobao"/>
+        <result property="taobaoCode" column="taobao_code"/>
+        <result property="price" column="price"/>
+        <result property="weight" column="weight"/>
+        <result property="isLogistics" column="is_logistics"/>
+        <result property="logisticsComp" column="logistics_comp"/>
+        <result property="logisticsName" column="logistics_name"/>
+        <result property="logisticsNo" column="logistics_no"/>
+        <result property="logisticsAddress" column="logistics_address"/>
+        <result property="logisticsPhone" column="logistics_phone"/>
+        <result property="isMark" column="is_mark"/>
+        <result property="mark" column="mark"/>
+        <result property="inChargeId" column="in_charge_id"/>
+        <result property="platformName" column="platform_name"/>
+        <result property="userNote" column="user_note"/>
+        <result property="isPay" column="is_pay"/>
+        <result property="isBad" column="is_bad"/>
+        <result property="isAnnul" column="is_annul"/>
+        <result property="role" column="role"/>
+        <result property="createTime" column="create_time"/>
+        <result property="mobile" column="mobile"/>
+        <result property="userName" column="user_name"/>
+        <result property="shopCategory" column="shop_category"/>
+        <result property="shopCategoryId" column="shop_category_id"/>
+        <result property="orderTime" column="order_time"/>
+        <!--新增字段-->
+        <result property="userPay" column="userPay"/>
+        <result property="commentImg" column="comment_img"/>
+        <result property="imgList" column="img_list"/>
+        <result property="comment" column="comment"/>
+        <result property="commentPay" column="comment_pay"/>
+        <result property="commentUser" column="comment_user"/>
+        <result property="isAddCom" column="is_addCom"/>
+        <result property="cardNumber" column="cardNumber"/>
+        <result property="holder" column="holder"/>
+        <result property="userNote" column="userNote"/>
+    </resultMap>
+
+    <select id="getList" parameterType="java.util.Map" resultMap="missionMap">
+        SELECT t.*,tm.bank AS bankInfo,tm.begin_time, tm.bad_info AS badInfo, tm.refuse_note AS refuseNote,
+        tm.card_number AS cardNumber, tm.holder as holder,
+        tm.cancel_note AS cancelNote,
+        tm.user_note AS userNote
+        FROM t_mission t
+        LEFT JOIN t_mission_detail tm  ON  t.id = tm.mission_id
+        <where>
+            <if test="inChargeId != null and inChargeId != ''">
+                AND  t.in_charge_id = #{inChargeId}
+            </if>
+            <if test="role != null and role != ''">
+                AND t.role = #{role}
+            </if>
+            <if test="agentId != null and agentId !=''">
+              AND  t.seller_id IN (SELECT id  FROM t_seller WHERE pid = #{agentId} AND is_seller = 3)
+            </if>
+            <if test="role1 != null and role1 != ''">
+                AND t.role > #{role1}
+            </if>
+            <if test="role2 != null and role2 != ''">
+                AND t.role &lt;= #{role2}
+            </if>
+            <if test="missionCode != null and missionCode != ''">
+               AND t.mission_code LIKE concat(#{missionCode},'%')
+            </if>
+            <if test="taskId != null and taskId != ''">
+                AND t.task_id = #{taskId}
+            </if>
+            <if test="sellerName != null and sellerName != ''">
+                AND t.seller_name LIKE concat(#{sellerName},'%')
+            </if>
+            <if test="shopId != null and shopId != ''">
+                AND t.shop_id = #{shopId}
+            </if>
+            <if test="userName != null and userName != ''">
+                AND t.user_name LIKE concat(#{userName},'%')
+            </if>
+            <if test="sellerId != null and sellerId != ''">
+                AND t.seller_id =#{sellerId}
+            </if>
+            <if test="shopName != null and shopName != ''">
+                AND shop_name LIKE concat(#{shopName},'%')
+            </if>
+            <if test="taoBao != null and taoBao != ''">
+                AND t.taobao LIKE concat(#{taoBao},'%')
+            </if>
+            <if test="taoBaoCode != null and taoBaoCode != ''">
+                AND t.taobao_code = #{taoBaoCode}
+            </if>
+            <if test="isBad != null and isBad != ''">
+                AND t.is_bad = #{isBad}
+            </if>
+            <if test="isAnnul != null and isAnnul != ''">
+                AND t.is_annul = #{isAnnul}
+            </if>
+            <if test="taskStyle != null and taskStyle != ''">
+                AND t.task_style = #{taskStyle}
+            </if>
+            <if test="status != null and status != ''">
+                AND t.status = #{status}
+            </if>
+            <if test="isMark != null and isMark != ''">
+                AND t.is_mark = #{isMark}
+            </if>
+            <if test="startTime != null and startTime != ''">
+                AND t.mission_time >= #{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                AND t.mission_time &lt;= #{endTime}
+            </if>
+            <if test="isPay != null and isPay != ''">
+                AND t.is_pay = #{isPay}
+            </if>
+            <if test="startTime1 != null and startTime1 != ''">
+                AND t.create_time >= #{startTime1}
+            </if>
+            <if test="endTime1 != null and endTime1 != ''">
+                AND t.create_time &lt;= #{endTime1}
+            </if>
+            <if test="sort == 0">
+                ORDER BY t.create_time DESC
+            </if>
+            <if test="sort == 1">
+                ORDER BY t.mission_time DESC
+            </if>
+        </where>
+    </select>
+
+    <select id="getHistoryByMissionId" parameterType="java.util.Map" resultMap="missionMap">
+        SELECT
+            create_time,
+            shop_name,
+            price,
+            seller_name,
+            shop_category,
+            is_annul,
+            `status`,
+            seller_id,
+            user_id
+        FROM
+            t_mission
+        WHERE
+        user_id = #{userId}
+        AND id != #{missionId}
+        AND role != 3
+        ORDER BY
+        create_time DESC
+    </select>
+
+    <select id="getHistoryByUserId" parameterType="long" resultMap="missionMap">
+      SELECT
+            t.mission_code,
+            t.create_time,
+            t.shop_name,
+            t.price,
+            tm.user_pay AS userPay,
+            t.`status`,
+            t.is_annul
+        FROM
+            t_mission t
+        LEFT JOIN t_mission_detail tm ON t.id = tm.mission_id
+        <where>
+            user_id = #{userId} AND t.role = 2
+            <if test="taskId != null and taskId == ''">
+                AND t.mission_code = #{missionCode}
+            </if>
+            <if test="taskStyle != null">
+                AND t.task_style = #{taskStyle}
+            </if>
+            <if test="status != null and status == ''">
+                AND t.status = #{status}
+            </if>
+            <if test="orderStyle == 1 and orderStyle == '1'">
+                ORDER BY t.create_time DESC
+            </if>
+            <if test="orderStyle == 2 and orderStyle == '2'">
+                ORDER BY t.create_time
+            </if>
+
+        </where>
+    </select>
+
+    <select id="getAppointList" parameterType="java.util.Map" resultMap="missionMap">
+        SELECT
+        t.mission_code,
+        t.shop_name,
+        t.price,
+        t.taobao,
+        t.key_word,
+        t.mobile,
+        t.create_time,
+        t.`status`,
+        tm.comment_img,
+        tm.img_list,
+        tm.small_video,
+        tm.comment,
+        t.user_id,
+        t.seller_id,
+        t.id,
+        tm.comment_pay,
+        tm.comment_user,
+        tm.is_comment,
+        tm.is_addCom,
+        tm.addCom,
+        tm.add_imgList,
+        tm.add_small_video,
+        tm.add_com_img,
+        tm.add_com_user
+        FROM
+        t_mission t
+        LEFT JOIN t_mission_detail tm ON tm.mission_id = t.id
+        <where>
+            <if test="missionCode != null and missionCode != ''">
+                t.mission_code = #{missionCode}
+            </if>
+            <if test="inChargeId != null and inChargeId != ''">
+                AND  t.in_charge_id = #{inChargeId}
+            </if>
+            <if test="sellerId != null and sellerId != ''">
+                AND t.seller_id = #{sellerId}
+            </if>
+            <if test="shopName != null and shopName != ''">
+                AND t.shop_name LIKE concat(#{shopName},'%')
+            </if>
+            <if test="taobao != null and taobao != ''">
+                AND t.taobao LIKE concat(#{taobao},'%')
+            </if>
+            <if test="mobile != null and mobile != ''">
+                AND t.mobile LIKE concat(#{mobile},'%')
+            </if>
+            <if test="role != null and role != ''">
+                AND  t.role  = #{role}
+            </if>
+            <if test="isAnnul != null and isAnnul != ''">
+                AND  t.is_annul  = #{isAnnul}
+            </if>
+            <if test="status != null and status != ''">
+                AND  t.status = #{status}
+            </if>
+            <if test="shopId != null and shopId != ''">
+                AND  t.shop_id  = #{shopId}
+            </if>
+            <if test="isComment != null and isComment != ''">
+                AND tm.is_comment = #{isComment}
+            </if>
+            <if test="isAddCom != null and isAddCom != ''">
+                AND tm.is_addCom = #{isAddCom}
+            </if>
+            <if test="startTime != null and startTime != ''">
+                AND t.mission_time >= #{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                AND t.mission_time &lt;= #{endTime}
+            </if>
+            <if test="startTime1 != null and startTime1 != ''">
+                AND t.create_time >= #{startTime1}
+            </if>
+            <if test="endTime1 != null and endTime1 != ''">
+                AND t.create_time &lt;= #{endTime1}
+            </if>
+        </where>
+        order by t.create_time desc
+    </select>
+
+    <update id="updates" parameterType="java.util.List">
+        update t_mission
+        <set>
+            is_pay = 2,
+            status = 4
+        </set>
+        where id in
+        <foreach collection="list" item="item" index="index" open="(" close=")" separator=",">
+              #{item.id}
+        </foreach>
+    </update>
+
+    <select id="getStateMoneyListByUserId" parameterType="long" resultMap="missionMap">
+        SELECT
+        t.task_id,
+        t.create_time,
+        t.shop_name,
+        t.price,
+        t.key_word,
+        tm.user_pay AS userPay,
+        t.`status`
+        FROM
+        t_mission t
+        LEFT JOIN t_mission_detail tm ON t.id = tm.mission_id
+        WHERE
+        t.user_id = #{userId} AND t.role = 2 AND t.is_annul = 1 AND t.status > 1 AND t.status &lt; 7
+        ORDER BY t.create_time  DESC
+    </select>
+
+    <select id="getVoListByMap" parameterType="java.util.Map" resultMap="missionMap">
+        SELECT
+            t.id,
+            t.task_id,
+            tm.publish_time,
+            t.task_style,
+            t.shop_name,
+            t.shop_category,
+            tm.user_pay,
+            t.is_auth
+        FROM
+            t_mission t
+        LEFT JOIN t_mission_detail tm ON t.id = tm.mission_id
+        WHERE
+        t.role = 2 AND t.status = 1
+    </select>
+
+    <select id="getHistoryListByUserId" parameterType="java.util.Map" resultMap="missionMap">
+        SELECT
+        t.mission_code,
+        t.create_time,
+        t.shop_name,
+        t.shop_id,
+        t.price,
+        tm.user_pay AS userPay,
+        t.`status`,
+        t.id,
+        t.task_id,
+        tm.publish_time,
+        t.task_style,
+        t.user_note,
+        t.mission_time,
+        t.role,
+        t.is_annul,
+        tm.is_comment,
+        tm.comment,
+        tm.img_list,
+        tm.small_video,
+        tm.is_addCom,
+        tm.addCom,
+        tm.add_imgList,
+        tm.add_small_video,
+        t.taobao_code,
+        tm.img,
+        tm.paying,
+        tm.paied,
+        tm.comment_img,
+        tm.add_com_img,
+        tm.cancel_note,
+        tm.refuse_note,
+        (SELECT GROUP_CONCAT(imgList) FROM t_view tv WHERE tv.mission_id = t.id AND tv.`day`= 1)AS view1,
+        (SELECT GROUP_CONCAT(imgList) FROM t_view tv WHERE tv.mission_id = t.id AND tv.`day`= 2)AS view2
+        FROM
+        t_mission t
+        LEFT JOIN t_mission_detail tm ON t.id = tm.mission_id
+        <where>
+            <if test="userId != null and userId != ''">
+                t.user_id = #{userId}
+            </if>
+            <if test="role != null and role != ''">
+                AND t.role = #{role}
+            </if>
+            <if test="isAnnul != null and isAnnul != ''">
+                AND t.is_annul = #{isAnnul}
+            </if>
+            <if test="missionCode != null and missionCode != ''">
+                AND t.mission_code = #{missionCode}
+            </if>
+            <if test="taskStyle != null ">
+                AND t.task_style = #{taskStyle}
+            </if>
+            <if test="status1 == 1 or status1 == '1'">
+                AND (t.status &lt;&gt; 7 or tm.is_comment = 2 or tm.is_addCom = 2)
+            </if>
+            <if test="status1 == 2 or status1 == '2'">
+                AND t.status = 7 AND tm.is_comment != 2 AND tm.is_addCom != 2
+            </if>
+            <if test="createTime != null and createTime != ''">
+                AND t.create_time >= #{createTime}
+            </if>
+        </where>
+        ORDER BY t.create_time  DESC
+    </select>
+
+    <select id="getHistoryListByUserId1" parameterType="java.util.Map" resultMap="missionMap">
+        SELECT
+        `status`,task_id,shop_category_id,t.shop_id
+        FROM
+        t_mission
+        <where>
+            <if test="userId != null and userId != ''">
+                user_id = #{userId}
+            </if>
+            <if test="createTime != null and createTime != '' ">
+                AND create_time >= #{createTime}
+            </if>
+        </where>
+        ORDER BY t.create_time  DESC
+    </select>
+
+    <select id="getMissionDetail" parameterType="long" resultType="io.chaoshua.modules.app.vo.MissionVo">
+        SELECT
+            t.img,
+            t.img2,
+            t.img3,
+            t.price_from,
+            t.price_to,
+            t.interval_begin,
+            t.interval_end,
+            t.`order`,
+            tm.price,
+            t.footprint,
+            t.chat,
+            t.collection_com,
+            t.add_cart,
+            t.add_cart2,
+            t.shop_one,
+            t.key_search,
+            t.paying,
+            t.paied,
+            tm.mission_time,
+            tm.taobao_code,
+            tm.key_word,
+            tm.shop_name,
+            t.receive,
+            t.comment_img
+        FROM
+            t_mission tm INNER JOIN t_mission_detail t ON tm.id = t.mission_id
+        WHERE tm.id = #{missionId}
+    </select>
+
+    <select id="getAllListByRole" parameterType="java.util.Map" resultType="io.chaoshua.modules.job.entity.TaskMissionEntity">
+        SELECT
+            t.mission_code,
+            t.user_id,
+            t.id,
+            t.shop_category,
+            tm.update_time,
+            t.mission_time,
+            t.task_id
+        FROM
+            t_mission t
+        LEFT JOIN t_mission_detail tm ON t.id = tm.mission_id
+        <where>
+            <if test="role != null and role != ''">
+              t.role = #{role}
+            </if>
+            <if test="status != null and status != ''">
+                AND t.`status` = #{status}
+            </if>
+            <if test="missionTime != null ">
+                AND t.`mission_time` = #{missionTime}
+            </if>
+
+            <if test="time != null ">
+                AND DATE_ADD(
+                tm.update_time,
+                INTERVAL #{time} MINUTE
+                ) &lt;=  NOW()
+            </if>
+        </where>
+    </select>
+
+    <select id="getUserLastOrderTime" resultType="java.util.Date" parameterType="java.lang.Long">
+        select t.order_time from t_mission t
+        where t.is_annul = '1' and (t.`status` = '2' or t.`status` = '3' or t.`status` = '8')  and user_id = #{userId} and
+               t.order_time is not null
+        order by t.order_time desc limit 0,1
+    </select>
+
+    <select id="queryExportMissionList" resultType="io.chaoshua.modules.seller.dto.ExportMissionDTO">
+        SELECT
+            m.*, u.card_number,
+            u.holder,
+            u.bank
+            <if test="excelType == 3 or excelType == 4">
+                ,md.is_comment
+                ,md.is_addCom
+                ,t.seller_pay
+                ,t.view_pay
+                ,t.amount
+            </if>
+        FROM
+            (
+                SELECT
+                    id,
+                    task_id,
+                    taobao,
+                    taobao_code,
+                    user_id,
+                    user_name,
+                    task_style,
+                    shop_name,
+                    price,
+                    `status`,
+                    create_time,
+                    mission_time
+                FROM
+                    t_mission
+                WHERE
+                    id IN <foreach collection="ids" item="item" open="(" separator="," close=")">#{item}</foreach>
+            ) m
+        JOIN t_user u ON m.user_id = u.id
+        <if test="excelType == 3 or excelType == 4">
+            JOIN t_mission_detail md ON m.id = md.mission_id
+            JOIN t_task t ON m.task_id = t.id
+        </if>
+    </select>
+
+    <update id="updateStatusReceiveGood">
+        UPDATE t_mission
+        SET `status` = 6
+        WHERE
+            `status` = 5
+        AND ADDDATE(pay_time, INTERVAL 24 HOUR) >= NOW()
+    </update>
+</mapper>

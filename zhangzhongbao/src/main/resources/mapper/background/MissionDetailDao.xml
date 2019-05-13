@@ -1,0 +1,86 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.chaoshua.modules.background.dao.mission.MissionDetailDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.chaoshua.modules.background.entity.mission.MissionDetailEntity" id="missionDetailMap">
+        <result property="id" column="id"/>
+        <result property="missionId" column="mission_id"/>
+        <result property="mobile" column="mobile"/>
+        <result property="cardNumber" column="card_number"/>
+        <result property="bank" column="bank"/>
+        <result property="holder" column="holder"/>
+        <result property="shopCategory" column="shop_category"/>
+        <result property="style" column="style"/>
+        <result property="order" column="order"/>
+        <result property="intervalBegin" column="interval_begin"/>
+        <result property="intervalEnd" column="interval_end"/>
+        <result property="note" column="note"/>
+        <result property="otherNote" column="other_note"/>
+        <result property="img" column="img"/>
+        <result property="beginTime" column="begin_time"/>
+        <result property="url" column="url"/>
+        <result property="userPay" column="user_pay"/>
+        <result property="agentMoney" column="agent_money"/>
+        <result property="commentable" column="commentable"/>
+        <result property="role" column="role"/>
+        <result property="needCheck" column="need_check"/>
+        <result property="isBack" column="is_back"/>
+        <result property="isComment" column="is_comment"/>
+        <result property="isAddcom" column="is_addCom"/>
+        <result property="xiaohao" column="xiaohao"/>
+        <result property="buy" column="buy"/>
+        <result property="check" column="check"/>
+        <result property="compareOne" column="compare_one"/>
+        <result property="compareTwo" column="compare_two"/>
+        <result property="compareThree" column="compare_three"/>
+        <result property="collectionCom" column="collection_com"/>
+        <result property="addCart" column="add_cart"/>
+        <result property="addCart2" column="add_cart2"/>
+        <result property="shopOne" column="shop_one"/>
+        <result property="footprint" column="footprint"/>
+        <result property="chat" column="chat"/>
+        <result property="keySearch" column="key_search"/>
+        <result property="glanceCom" column="glance_com"/>
+        <result property="paying" column="paying"/>
+        <result property="sameStyle" column="same_style"/>
+        <result property="paied" column="paied"/>
+        <result property="comment" column="comment"/>
+        <result property="imgList" column="img_list"/>
+        <result property="commentImg" column="comment_img"/>
+        <result property="receive" column="receive"/>
+        <result property="addImglist" column="add_imgList"/>
+        <result property="addcom" column="addCom"/>
+        <result property="publishTime" column="publish_time"/>
+        <result property="addComPay" column="add_com_pay"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remitTime" column="remit_time"/>
+        <result property="commentTime" column="comment_time"/>
+        <result property="commentPay" column="comment_pay"/>
+        <result property="commentUser" column="comment_user"/>
+        <result property="finishComTime" column="finish_com_time"/>
+        <result property="finishAddComTime" column="finish_add_com_time"/>
+        <result property="cancelNote" column="cancel_note"/>
+        <result property="addComImg" column="add_com_img"/>
+        <result property="addComUser" column="add_com_user"/>
+        <result property="refuseNote" column="refuse_note"/>
+        <result property="badInfo" column="bad_info"/>
+        <result property="userNote" column="user_note"/>
+    </resultMap>
+
+    <select id="getAuthByMissionId" parameterType="long" resultMap="missionDetailMap">
+        SELECT xiaohao,buy,`check` FROM t_mission_detail WHERE mission_id = #{missionId}
+    </select>
+
+    <select id="select" parameterType="long" resultMap="missionDetailMap">
+        select * from t_mission_detail where mission_id = #{id}
+    </select>
+    <select id="getBankByMissionId" parameterType="long" resultMap="missionDetailMap">
+        select bank from t_mission_detail where mission_id = #{id}
+    </select>
+
+    <update id="updateAuthByMissionId" parameterType="io.chaoshua.modules.app.form.AuthPictureForm">
+        UPDATE t_mission_detail SET xiaohao = #{xiaohao},buy = #{buy},`check` = #{check} WHERE  mission_id = #{missionId}
+    </update>
+</mapper>

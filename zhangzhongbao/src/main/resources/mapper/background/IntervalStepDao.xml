@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.chaoshua.modules.background.dao.IntervalStepDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.chaoshua.modules.background.entity.IntervalStepEntity" id="intervalStepMap">
+        <result property="id" column="id"/>
+        <result property="one" column="one"/>
+        <result property="two" column="two"/>
+        <result property="three" column="three"/>
+        <result property="four" column="four"/>
+        <result property="five" column="five"/>
+        <result property="six" column="six"/>
+        <result property="seven" column="seven"/>
+        <result property="eight" column="eight"/>
+        <result property="nine" column="nine"/>
+        <result property="ten" column="ten"/>
+        <result property="fir" column="fir"/>
+        <result property="sec" column="sec"/>
+        <result property="thi" column="thi"/>
+        <result property="fourth" column="fourth"/>
+        <result property="fifth" column="fifth"/>
+        <result property="appointOneSeller" column="appoint_one_seller"/>
+        <result property="appointOneUser" column="appoint_one_user"/>
+        <result property="appointTwoSeller" column="appoint_two_seller"/>
+        <result property="appointTwoUser" column="appoint_two_user"/>
+        <result property="commentSeller" column="comment_seller"/>
+        <result property="commentUser" column="comment_user"/>
+        <result property="addCommentSeller" column="add_comment_seller"/>
+        <result property="addCommentUser" column="add_comment_user"/>
+        <result property="registerUser" column="register_user"/>
+        <result property="missionUser" column="mission_user"/>
+        <result property="secMissionUser" column="sec_mission_user"/>
+        <result property="sellerMoney" column="seller_money"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+
+</mapper>

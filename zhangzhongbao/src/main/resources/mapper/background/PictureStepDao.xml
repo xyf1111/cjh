@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.chaoshua.modules.background.dao.PictureStepDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.chaoshua.modules.background.entity.PictureStepEntity" id="pictureStepMap">
+        <result property="id" column="id"/>
+        <result property="xiaohaoRegister" column="xiaohao_register"/>
+        <result property="xiaohaoExample" column="xiaohao_example"/>
+        <result property="buyRegister" column="buy_register"/>
+        <result property="buyExample" column="buy_example"/>
+        <result property="aliRegister" column="ali_register"/>
+        <result property="sexRegister" column="sex_register"/>
+        <result property="sexExample" column="sex_example"/>
+        <result property="checkExample" column="check_example"/>
+        <result property="checkCode" column="check_code"/>
+        <result property="checkStyle" column="check_style"/>
+        <result property="checkRegister" column="check_register"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+
+</mapper>

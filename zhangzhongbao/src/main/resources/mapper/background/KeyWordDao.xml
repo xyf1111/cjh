@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.chaoshua.modules.background.dao.task.KeyWordDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.chaoshua.modules.background.entity.task.KeyWordEntity" id="keyWordMap">
+        <result property="id" column="id"/>
+        <result property="taskId" column="task_id"/>
+        <result property="taskMouldId" column="task_mould_id"/>
+        <result property="keyWord" column="key_word"/>
+        <result property="amount" column="amount"/>
+        <result property="sort" column="sort"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <select id="getTaskKeyWordById" parameterType="java.util.Map" resultMap="keyWordMap">
+        SELECT
+            *
+        FROM
+            t_key_word
+        <where>
+            1 = 1
+            <if test="taskId != null and taskId != ''">
+              AND task_id = #{taskId}
+            </if>
+            <if test="taskMouldId != null and taskMouldId != ''">
+              AND  task_mould_id = #{taskMouldId}
+            </if>
+            order by sort ASC
+        </where>
+    </select>
+
+    <delete id="deleteByTaskId" parameterType="java.util.Map" >
+        delete from t_key_word
+        <where>
+            1 = 1
+            <if test="taskId != null and taskId != ''">
+                AND task_id = #{taskId}
+            </if>
+            <if test="taskMouldId != null and taskMouldId != ''">
+                AND  task_mould_id = #{taskMouldId}
+            </if>
+        </where>
+    </delete>
+
+</mapper>

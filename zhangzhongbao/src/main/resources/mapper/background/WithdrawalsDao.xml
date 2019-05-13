@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.chaoshua.modules.background.dao.WithdrawalsDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.chaoshua.modules.background.entity.WithdrawalsEntity" id="withdrawalsMap">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="mobile" column="mobile"/>
+        <result property="wechat" column="weChat"/>
+        <result property="bank" column="bank"/>
+        <result property="cardNumber" column="card_number"/>
+        <result property="amount" column="amount"/>
+        <result property="holder" column="holder"/>
+        <result property="wechatqr" column="weChatQr"/>
+        <result property="taobao" column="taobao"/>
+        <result property="type" column="type"/>
+        <result property="note" column="note"/>
+        <result property="role" column="role"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <!--添加-->
+        <result property="sumMoney" column="sumMoney"/>
+    </resultMap>
+
+    <select id="getSumMoney" parameterType="java.util.Map" resultMap="withdrawalsMap">
+        SELECT
+            SUM(amount) AS sumMoney,
+            create_time,
+            role
+        FROM
+            t_withdrawals
+        GROUP BY role
+        <if test="startTime != null and startTime != ''">
+            HAVING create_time >= #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+          AND  create_time &lt;= #{endTime}
+        </if>
+    </select>
+</mapper>

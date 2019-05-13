@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.chaoshua.modules.background.dao.task.TaskDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.chaoshua.modules.background.entity.task.TaskEntity" id="taskMap">
+        <result property="id" column="id"/>
+        <result property="sellerId" column="seller_id"/>
+        <result property="shopId" column="shop_id"/>
+        <result property="sellerName" column="seller_name"/>
+        <result property="img" column="img"/>
+        <result property="img2" column="img2"/>
+        <result property="img3" column="img3"/>
+        <result property="shopName" column="shop_name"/>
+        <result property="shopCategory" column="shop_category"/>
+        <result property="shopCategoryId" column="shop_category_id"/>
+        <result property="url" column="url"/>
+        <result property="style" column="style"/>
+        <result property="price" column="price"/>
+        <result property="priceFrom" column="price_from"/>
+        <result property="priceTo" column="price_from"/>
+        <result property="weight" column="weight"/>
+        <result property="keyword" column="keyWord"/>
+        <result property="order" column="order"/>
+        <result property="intervalBegin" column="interval_begin"/>
+        <result property="intervalEnd" column="interval_end"/>
+        <result property="note" column="note"/>
+        <result property="otherNote" column="other_note"/>
+        <result property="role" column="role"/>
+        <result property="publishTime" column="publish_time"/>
+        <result property="feedback" column="feedback"/>
+        <result property="amount" column="amount"/>
+        <result property="interval" column="interval"/>
+        <result property="taskStyle" column="task_style"/>
+        <result property="appoint" column="appoint"/>
+        <result property="inChargeId" column="in_charge_id"/>
+        <result property="accept" column="accept"/>
+        <result property="remain" column="remain"/>
+        <result property="beginTime" column="begin_time"/>
+        <result property="userIdList" column="user_id_list"/>
+        <result property="platformName" column="platform_name"/>
+        <result property="remove" column="remove"/>
+        <result property="viewPay" column="view_pay"/>
+        <result property="sellerPay" column="seller_pay"/>
+        <result property="userPay" column="user_pay"/>
+        <result property="agentMoney" column="agent_money"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <select id="getList" parameterType="java.util.Map" resultMap="taskMap">
+        SELECT
+            id,
+            shop_id,
+            seller_name,
+            seller_id,
+            shop_name,
+            shop_category,
+            shop_category_id,
+            task_style,
+            user_pay,
+            keyWord,
+            publish_time,
+            task_style,
+            view_pay,
+            img,
+            price,
+            weight,
+            amount,
+            seller_pay,
+            accept,
+            `remove`,
+            begin_time,
+            `interval`,
+            create_time,
+            role,
+            platform_name,
+            `order`,
+            feedback
+        FROM
+            t_task
+        <where>
+            <if test="agentId != null and agentId != ''">
+                seller_id IN(SELECT id FROM t_seller WHERE pid = #{agentId} AND is_seller = 3)
+            </if>
+            <if test="role != null and role != ''">
+              AND  role = #{role}
+            </if>
+            <if test="id != null and id != ''">
+                AND id = #{id}
+            </if>
+            <if test="sellerId != null and sellerId != ''">
+               AND seller_id = #{sellerId}
+            </if>
+            <if test="inChargeId != null and inChargeId != ''">
+               AND in_charge_id = #{inChargeId}
+            </if>
+            <if test="sellerName != null and sellerName != ''">
+                AND  seller_name LIKE concat(#{sellerName},'%')
+            </if>
+            <if test="shopName != null and shopName != ''">
+                AND  shop_name LIKE concat(#{shopName},'%')
+            </if>
+            <if test="keyWord != null and keyWord != ''">
+                AND  keyWord LIKE concat(#{keyWord},'%')
+            </if>
+            <if test="taskStyle != null and taskStyle != ''">
+                AND  task_style = #{taskStyle}
+            </if>
+            <if test="status == 1 or status == '1'">
+                AND  remain = 0
+            </if>
+            <if test="status == 2 or status == '2'">
+                AND  remain > 0
+            </if>
+            <if test="startTime != null and startTime != ''">
+                AND  begin_time  >= #{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                AND  begin_time  &lt;= #{endTime}
+            </if>
+            <if test="order1 == 1 or order1 == '1'">
+                order by begin_time desc
+            </if>
+            <if test="order1 == 2 or order1 == '2'">
+                order by begin_time desc
+            </if>
+            <if test="order1 == 3 or order1 == '3'">
+                order by id desc
+            </if>
+            <if test="order1 == 4 or order1 == '4'">
+                order by create_time desc
+            </if>
+        </where>
+    </select>
+
+    <select id="getVoList" parameterType="java.util.Map" resultMap="taskMap">
+        SELECT
+        t.id,t.task_style,t.shop_category,t.publish_time,t.shop_name,t.user_pay,t.keyWord
+        FROM t_task t
+        <where>
+        t.role = 2 AND t.remain > 0 AND
+        IF(FIND_IN_SET(#{userId},t.user_id_list)>0,
+        DATE_ADD((SELECT create_time FROM t_task ta WHERE ta.shop_category_id = t.shop_category_id ORDER BY ta.create_time DESC LIMIT 1 ),
+        INTERVAL (SELECT tc.`limit` FROM t_category tc WHERE tc.id = t.shop_category_id) DAY),NOW())&lt;= NOW() AND
+        IF(FIND_IN_SET(#{userId},t.user_id_list)>0,
+        DATE_ADD(t.create_time,INTERVAL (SELECT `interval` FROM t_shop ts WHERE ts.id = t.shop_id) DAY),NOW())&lt;= NOW()
+            <if test="taskId != null and taskId != ''">
+                AND  t.id = #{taskId}
+            </if>
+            <if test='taskStyle != null '>
+                AND  t.task_style = #{taskStyle}
+            </if>
+            <if test="orderStyle == 1 and orderStyle == '1'">
+                ORDER BY t.create_time DESC
+            </if>
+            <if test="orderStyle == 2 and orderStyle == '2'">
+                ORDER BY t.create_time
+            </if>
+            <if test="orderUserPay == 2 and orderUserPay == '2'">
+                ORDER BY t.user_pay
+            </if>
+            <if test="orderUserPay == 1 and orderUserPay == '1'">
+                ORDER BY t.user_pay DESC
+            </if>
+        </where>
+
+    </select>
+
+    <select id="getDetail" parameterType="long" resultMap="taskMap">
+        SELECT
+            t.id,
+            t.note,
+            t.other_note,
+            t.shop_category,
+            t.shop_name,
+            ts.`interval`,
+            tc.`limit`
+        FROM
+        t_task t
+        LEFT JOIN t_shop ts ON ts.id = t.shop_id
+        LEFT JOIN t_category tc ON tc.id = t.shop_category_id
+        WHERE
+        t.id = #{taskId}
+    </select>
+
+    <select id="getListByUserId" parameterType="long" resultType="io.chaoshua.modules.background.entity.task.TaskVo1">
+        SELECT
+            t.id,
+            t.shop_category,
+            t.shop_category_id,
+            t.shop_id	,
+            t.create_time,
+            ADDDATE(MAX(t.create_time),tc.`limit`)AS categoryTime,
+            ADDDATE(t.create_time,ts.`interval`) AS shopTime
+        FROM
+            t_task t
+            LEFT JOIN t_mission tm ON tm.task_id = t.id
+            LEFT JOIN t_shop ts ON  ts.id = tm.shop_id
+            LEFT JOIN t_category tc ON tc.id = t.shop_category_id
+        WHERE  tm.user_id = #{userId}
+         GROUP BY shop_category_id
+
+    </select>
+
+    <select id="getListByRole" parameterType="long" resultType="io.chaoshua.modules.background.entity.task.TaskVo2">
+        SELECT  shop_id,
+         ADDDATE(DATE_FORMAT(MAX(create_time),'%Y-%m-%d'),INTERVAL (SELECT refuse_shop FROM t_invitation_step WHERE id = 1) DAY) create_time
+         FROM t_mission WHERE user_id = #{userId} AND role = 3 GROUP BY shop_id
+    </select>
+
+    <select id="getListByIsAnnul" parameterType="long" resultType="io.chaoshua.modules.background.entity.task.TaskVo2">
+        SELECT  shop_id,
+         ADDDATE(DATE_FORMAT(MAX(create_time),'%Y-%m-%d'),INTERVAL (SELECT remove_time FROM t_invitation_step WHERE id = 1) DAY) create_time
+         FROM t_mission WHERE user_id = #{userId} AND is_annul = 2 GROUP BY shop_id
+    </select>
+    <select id="getListShopTimeByUserId" parameterType="long" resultType="io.chaoshua.modules.background.entity.task.TaskVo2">
+        SELECT
+        t.shop_id,
+        ADDDATE(MAX(t.create_time),ts.`interval`) AS create_time
+    FROM
+        t_task t
+        LEFT JOIN t_mission tm ON tm.task_id = t.id
+        LEFT JOIN t_shop ts ON  ts.id = tm.shop_id
+    WHERE  tm.user_id = #{userId}
+    GROUP BY shop_id
+    </select>
+
+    <select id="getTaskListFromApp" resultMap="taskMap">
+        SELECT id, shop_id, seller_name, seller_id, shop_name, shop_category, shop_category_id, task_style, user_pay,
+            keyWord, publish_time, view_pay, img, price, amount, seller_pay, accept, `remove`, begin_time,`interval`,
+            create_time, role, platform_name, `order`, feedback
+        FROM t_task
+        WHERE shop_category_id not in (
+            SELECT DISTINCT tm.shop_category_id
+            FROM t_mission tm LEFT JOIN t_category tc ON tc.id = tm.shop_category_id
+            WHERE ADDDATE(tm.create_time, tc.`limit`) > NOW() AND tm.user_id = #{userId} AND tm.is_annul = 1 AND tm.role &lt; 3
+        ) AND shop_id not in (
+            SELECT DISTINCT tm.shop_id
+            FROM t_mission tm LEFT JOIN t_shop ts ON ts.id = tm.shop_id
+            WHERE ADDDATE(tm.create_time, ts.`interval`) > NOW() AND tm.user_id = #{userId} AND tm.is_annul = 1 AND tm.role &lt; 3
+            UNION
+            SELECT DISTINCT shop_id
+            FROM t_mission
+            WHERE ADDDATE(DATE_FORMAT(create_time, '%Y-%m-%d'), INTERVAL ( SELECT refuse_shop FROM t_invitation_step WHERE id = 1 ) DAY) > NOW()
+            AND user_id = #{userId}  AND role = 3
+            UNION
+            SELECT DISTINCT shop_id
+            FROM t_mission
+            WHERE ADDDATE(DATE_FORMAT(create_time, '%Y-%m-%d'), INTERVAL ( SELECT remove_time FROM t_invitation_step WHERE id = 1 ) DAY) > NOW()
+            AND user_id = #{userId} AND is_annul = 2
+        )
+        AND begin_time &lt;= NOW()
+        AND price &lt;= #{userPriceLimit}
+        <if test="role != null and role != ''">
+            AND role = #{role}
+        </if>
+        <if test="taskStyle != null and taskStyle != ''">
+            AND task_style = #{taskStyle}
+        </if>
+        <if test="taskId != null and taskId != ''">
+            AND id = #{taskId}
+        </if>
+        AND remain > 0
+        ORDER BY publish_time DESC
+    </select>
+</mapper>

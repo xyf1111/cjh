@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.chaoshua.modules.background.dao.task.TaskMouldDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.chaoshua.modules.background.entity.task.TaskMouldEntity" id="taskMouldMap">
+        <result property="id" column="id"/>
+        <result property="sellerId" column="seller_id"/>
+        <result property="shopId" column="shop_id"/>
+        <result property="img" column="img"/>
+        <result property="img2" column="img2"/>
+        <result property="img3" column="img3"/>
+        <result property="shopName" column="shop_name"/>
+        <result property="url" column="url"/>
+        <result property="style" column="style"/>
+        <result property="price" column="price"/>
+        <result property="priceFrom" column="price_from"/>
+        <result property="priceTo" column="price_to"/>
+        <result property="keyword" column="keyWord"/>
+        <result property="order" column="order"/>
+        <result property="intervalBegin" column="interval_begin"/>
+        <result property="intervalEnd" column="interval_end"/>
+        <result property="note" column="note"/>
+        <result property="otherNote" column="other_note"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+
+</mapper>

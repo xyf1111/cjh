@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.chaoshua.modules.background.dao.ShopDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.chaoshua.modules.background.entity.ShopEntity" id="shopMap">
+        <result property="id" column="id"/>
+        <result property="sellerId" column="seller_id"/>
+        <result property="name" column="name"/>
+        <result property="contact" column="contact"/>
+        <result property="mobile" column="mobile"/>
+        <result property="category" column="category"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="url" column="url"/>
+        <result property="platform" column="platform"/>
+        <result property="role" column="role"/>
+        <result property="total" column="total"/>
+        <result property="interval" column="interval"/>
+        <result property="isPublish" column="is_publish"/>
+        <result property="lastPublish" column="last_publish"/>
+        <result property="isDefault" column="is_default"/>
+        <result property="status" column="status"/>
+        <result property="passTime" column="pass_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <update id="updateAll">
+        UPDATE t_shop SET is_publish =  0
+    </update>
+
+    <select id="getShopListByPid" parameterType="java.util.Map" resultMap="shopMap">
+     SELECT * FROM(
+        SELECT
+            *
+        FROM
+            t_shop
+        WHERE
+            seller_id IN (
+                SELECT
+                    id
+                FROM
+                    t_seller
+                WHERE
+                    is_seller = #{isSeller}
+            AND pid = #{pid}
+        )) AS tt
+      <where>
+          <if test=" role != null and role != ''">
+              tt.role = #{role}
+          </if>
+          <if test=" status != null and status != ''">
+            AND  tt.status = #{status}
+          </if>
+          <if test=" name != null and name != ''">
+             AND tt.name LIKE concat(#{name},'%')
+          </if>
+          <if test=" category != null and category != ''">
+              AND tt.category LIKE concat(#{category},'%')
+          </if>
+          <if test=" mobile != null and mobile != ''">
+              AND tt.mobile LIKE mobile(#{mobile},'%')
+          </if>
+          <if test=" contact != null and contact != ''">
+              AND tt.contact LIKE concat(#{contact},'%')
+          </if>
+          <if test=" agentName != null and agentName != ''">
+              AND tt.agentName LIKE concat(#{agentName},'%')
+          </if>
+      </where>
+    </select>
+
+    <select id="getList" parameterType="java.util.Map" resultMap="shopMap">
+      SELECT* FROM(
+        SELECT
+            *
+        FROM
+            `t_shop`
+        WHERE
+        seller_id IN (
+            SELECT
+                id
+            FROM
+                t_seller
+            <where>
+                <if test="flag == 1 or flag == '1'">
+                  is_seller BETWEEN 0 AND 2
+                </if>
+                <if test="flag == 2 or flag == '2'">
+                    is_seller = 3
+                </if>
+            </where>
+        ))tt
+        <where>
+          <if test="role != null and role != ''">
+              tt.role = #{role}
+          </if>
+          <if test="status != null and status != ''">
+             AND  tt.status = #{status}
+          </if>
+          <if test="category != null and category != ''">
+              AND tt.category LIKE concat(#{category},'%')
+          </if>
+          <if test="name != null and name != ''">
+              AND tt.name LIKE concat(#{name},'%')
+          </if>
+          <if test="mobile != null and mobile != ''">
+              AND  tt.mobile LIKE concat(#{mobile},'%')
+          </if>
+          <if test="contact != null and contact != ''">
+              AND tt.contact LIKE concat(#{contact},'%')
+          </if>
+          <if test="sellerId != null and sellerId != ''">
+              AND tt.seller_id = #{sellerId}
+          </if>
+        </where>
+        ORDER BY tt.create_time DESC
+    </select>
+</mapper>

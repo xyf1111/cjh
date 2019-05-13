@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.chaoshua.modules.background.dao.agent.AgentMoneyDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.chaoshua.modules.background.entity.agent.AgentMoneyEntity" id="agentMoneyMap">
+        <result property="id" column="id"/>
+        <result property="agentId" column="agent_id"/>
+        <result property="one" column="one"/>
+        <result property="two" column="two"/>
+        <result property="three" column="three"/>
+        <result property="four" column="four"/>
+        <result property="five" column="five"/>
+        <result property="six" column="six"/>
+        <result property="seven" column="seven"/>
+        <result property="eight" column="eight"/>
+        <result property="nine" column="nine"/>
+        <result property="ten" column="ten"/>
+        <result property="one1" column="one1"/>
+        <result property="two1" column="two1"/>
+        <result property="three1" column="three1"/>
+        <result property="four1" column="four1"/>
+        <result property="five1" column="five1"/>
+        <result property="six1" column="six1"/>
+        <result property="seven1" column="seven1"/>
+        <result property="eight1" column="eight1"/>
+        <result property="nine1" column="nine1"/>
+        <result property="ten1" column="ten1"/>
+        <result property="inChangeId" column="in_change_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+</mapper>
